@@ -295,8 +295,10 @@ ssloop4:
 	inx
 	lda table,x
 	sta lineptr+1
-	lda #180
-	ldy #21
+	lda #$2E
+	ldy #19
+	sta (lineptr),y
+	ldy #20
 	sta (lineptr),y
 	inx
 	cpx #48
