@@ -272,7 +272,7 @@ ssloop2:
 sspadels:
 	ldx #20
 ssloop3:
-	beq ssexit
+	beq ssinit4
 	lda table,x
 	sta lineptr
 	inx
@@ -286,7 +286,20 @@ ssloop3:
 	inx
 	cpx #28
 	jmp ssloop3
-ssexit:
-	rts
-;this is the end of the code	
-exit:
+ssinit4:
+	ldx #02
+ssloop4:
+	beq ssexit
+	lda table,x
+	sta lineptr
+	inx
+	lda table,x
+	sta lineptr+1
+	lda #180
+	ldy #21
+	sta (lineptr),y
+	inx
+	cpx #48
+	jmp ssloop4
+ssexit: rts
+
