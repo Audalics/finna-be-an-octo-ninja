@@ -6,6 +6,10 @@
 table = $0020
 lineptr = $0058
 p1score = $0060
+.alias iobase   $8800
+.alias iostatus [iobase + 1]
+.alias iocmd    [iobase + 2]
+.alias ioctrl   [iobase + 3]
 p2score = $0061
 	.CR	6502
 	.LI on,toff
@@ -124,6 +128,7 @@ start:
 	jsr waitforenter
 	jmp start
 	
+
 gameplay:
   jsr clear
   jsr strtscrn
@@ -136,6 +141,12 @@ gameplay:
   cpa #10
   beq p2win ;need
   jmp gameplay
+
+endscrn: rts
+drawball: rts
+onepoint: rts
+p2win: rts
+p1win:rts
 
 ;this part of the code uses the table to clear the screen
 clear:  ldx #0
@@ -305,3 +316,18 @@ ssloop4:
 	jmp ssloop4
 ssexit: rts
 
+waitforenter:
+	cli
+        lda #$0b
+        sta iocmd      ; Set command status
+        lda #$1a
+        sta ioctrl     ; 0 stop bits, 8 bit word, 2400 baud
+getkey:
+	lda iostatus   ; Read the ACIA status
+        and #$08       ; Is the rx register empty?
+        beq getkey     ; Yes, wait for it to fill
+        lda iobase     ; Otherwise, read into accumulator
+        cpa #$15
+        bne getkey
+	cli 
+	rts
